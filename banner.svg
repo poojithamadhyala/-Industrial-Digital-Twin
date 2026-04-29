@@ -1,0 +1,71 @@
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @keyframes slideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+      @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+      @keyframes flow { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+      @keyframes blink { 0%,100% { fill: #00ff88; } 50% { fill: #004422; } }
+      .t1 { animation: slideIn 0.6s ease forwards; }
+      .t2 { animation: slideIn 0.6s 0.2s ease both; }
+      .t3 { animation: slideIn 0.6s 0.4s ease both; }
+      .dot { animation: blink 1.5s ease-in-out infinite; }
+      .pipe { stroke-dasharray: 6 3; animation: flow 1.2s linear infinite; }
+    </style>
+  </defs>
+
+  <rect width="800" height="200" fill="#0a0a0f"/>
+
+  <!-- Grid lines -->
+  <line x1="0" y1="40" x2="800" y2="40" stroke="#111" stroke-width="1"/>
+  <line x1="0" y1="80" x2="800" y2="80" stroke="#111" stroke-width="1"/>
+  <line x1="0" y1="120" x2="800" y2="120" stroke="#111" stroke-width="1"/>
+  <line x1="0" y1="160" x2="800" y2="160" stroke="#111" stroke-width="1"/>
+  <line x1="160" y1="0" x2="160" y2="200" stroke="#111" stroke-width="1"/>
+  <line x1="320" y1="0" x2="320" y2="200" stroke="#111" stroke-width="1"/>
+  <line x1="480" y1="0" x2="480" y2="200" stroke="#111" stroke-width="1"/>
+  <line x1="640" y1="0" x2="640" y2="200" stroke="#111" stroke-width="1"/>
+
+  <!-- Animated pipeline -->
+  <line class="pipe" x1="60" y1="100" x2="740" y2="100" stroke="#00ff8833" stroke-width="1.5"/>
+
+  <!-- Nodes -->
+  <g class="t1">
+    <rect x="30" y="78" width="80" height="44" rx="4" fill="#111118" stroke="#00ff8844" stroke-width="1"/>
+    <text x="70" y="96" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="9">CONVEYOR</text>
+    <text x="70" y="108" text-anchor="middle" fill="#555" font-family="monospace" font-size="8">feeding boxes</text>
+    <circle class="dot" cx="115" cy="82" r="3" fill="#00ff88"/>
+  </g>
+
+  <g class="t2">
+    <rect x="160" y="78" width="80" height="44" rx="4" fill="#111118" stroke="#00ff8844" stroke-width="1"/>
+    <text x="200" y="96" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="9">SENSOR</text>
+    <text x="200" y="108" text-anchor="middle" fill="#555" font-family="monospace" font-size="8">pick trigger</text>
+    <circle class="dot" cx="245" cy="82" r="3" fill="#00ff88" style="animation-delay:0.3s"/>
+  </g>
+
+  <g class="t2">
+    <rect x="290" y="68" width="100" height="64" rx="4" fill="#111118" stroke="#00aaff44" stroke-width="1"/>
+    <text x="340" y="88" text-anchor="middle" fill="#00aaff" font-family="monospace" font-size="9">UR5e ROBOT</text>
+    <text x="340" y="100" text-anchor="middle" fill="#555" font-family="monospace" font-size="8">+ Robotiq 2F-85</text>
+    <text x="340" y="112" text-anchor="middle" fill="#555" font-family="monospace" font-size="8">pick &amp; place</text>
+    <circle class="dot" cx="395" cy="72" r="3" fill="#00aaff" style="animation-delay:0.2s"/>
+  </g>
+
+  <g class="t3">
+    <rect x="450" y="78" width="80" height="44" rx="4" fill="#111118" stroke="#aa00ff44" stroke-width="1"/>
+    <text x="490" y="96" text-anchor="middle" fill="#aa00ff" font-family="monospace" font-size="9">ML DETECT</text>
+    <text x="490" y="108" text-anchor="middle" fill="#555" font-family="monospace" font-size="8">anomaly score</text>
+    <circle class="dot" cx="535" cy="82" r="3" fill="#aa00ff" style="animation-delay:0.5s"/>
+  </g>
+
+  <g class="t3">
+    <rect x="590" y="78" width="80" height="44" rx="4" fill="#111118" stroke="#ff444444" stroke-width="1"/>
+    <text x="630" y="96" text-anchor="middle" fill="#ff4444" font-family="monospace" font-size="9">PLC SIM</text>
+    <text x="630" y="108" text-anchor="middle" fill="#555" font-family="monospace" font-size="8">fault inject</text>
+    <circle class="dot" cx="675" cy="82" r="3" fill="#ff4444" style="animation-delay:0.7s"/>
+  </g>
+
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" fill="#00ff88" font-family="monospace" font-size="13" font-weight="bold" letter-spacing="4" class="t1">INDUSTRIAL DIGITAL TWIN</text>
+  <text x="400" y="175" text-anchor="middle" fill="#333" font-family="monospace" font-size="9">ROS 2 · Webots · ML Anomaly Detection · Live SCADA Dashboard</text>
+</svg>

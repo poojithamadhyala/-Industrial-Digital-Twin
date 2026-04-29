@@ -1,0 +1,153 @@
+<svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @keyframes flow { from { stroke-dashoffset: 20; } to { stroke-dashoffset: 0; } }
+      @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+      @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+      @keyframes scan { 0% { transform:translateY(0); } 100% { transform:translateY(60px); } }
+      .pipe { stroke-dasharray:5 4; animation: flow 1s linear infinite; }
+      .pipe2 { stroke-dasharray:5 4; animation: flow 1.4s linear infinite; }
+      .pipe3 { stroke-dasharray:5 4; animation: flow 0.8s linear infinite; }
+      .b1 { animation: fadeUp 0.5s 0.1s ease both; }
+      .b2 { animation: fadeUp 0.5s 0.25s ease both; }
+      .b3 { animation: fadeUp 0.5s 0.4s ease both; }
+      .b4 { animation: fadeUp 0.5s 0.55s ease both; }
+      .b5 { animation: fadeUp 0.5s 0.7s ease both; }
+      .dot { animation: blink 1.2s ease-in-out infinite; }
+      .scan { animation: scan 2s linear infinite; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M1 1L9 5L1 9" fill="none" stroke="#00ff88" stroke-width="2"/>
+    </marker>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M1 1L9 5L1 9" fill="none" stroke="#00aaff" stroke-width="2"/>
+    </marker>
+  </defs>
+
+  <rect width="800" height="420" fill="#0a0a0f"/>
+
+  <!-- WEBOTS box -->
+  <g class="b1">
+    <rect x="20" y="20" width="220" height="180" rx="6" fill="#0d0d15" stroke="#00ff8833" stroke-width="1"/>
+    <text x="130" y="42" text-anchor="middle" font-family="monospace" font-size="10" fill="#00ff8866" letter-spacing="2">WEBOTS 3D</text>
+
+    <!-- Conveyor mini -->
+    <rect x="35" y="55" width="190" height="28" rx="3" fill="#111" stroke="#00ff8822" stroke-width="1"/>
+    <text x="130" y="73" text-anchor="middle" font-family="monospace" font-size="9" fill="#00ff88">conveyor belt</text>
+    <line class="pipe3" x1="40" y1="69" x2="215" y2="69" stroke="#00ff8833" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Robot mini -->
+    <rect x="35" y="95" width="85" height="48" rx="3" fill="#111" stroke="#00aaff22" stroke-width="1"/>
+    <text x="77" y="113" text-anchor="middle" font-family="monospace" font-size="9" fill="#00aaff">UR5e arm</text>
+    <text x="77" y="126" text-anchor="middle" font-family="monospace" font-size="8" fill="#335">Robotiq grip</text>
+    <circle class="dot" cx="105" cy="99" r="2.5" fill="#00aaff"/>
+
+    <!-- Bins mini -->
+    <rect x="130" y="95" width="30" height="22" rx="2" fill="#220000" stroke="#ff444433"/>
+    <rect x="168" y="95" width="30" height="22" rx="2" fill="#000022" stroke="#4444ff33"/>
+    <rect x="130" y="121" width="68" height="22" rx="2" fill="#221100" stroke="#ff880033"/>
+    <text x="145" y="110" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff4444">R</text>
+    <text x="183" y="110" text-anchor="middle" font-family="monospace" font-size="7" fill="#4488ff">B</text>
+    <text x="164" y="136" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff8800">O</text>
+
+    <!-- Camera -->
+    <rect x="35" y="155" width="85" height="30" rx="3" fill="#111" stroke="#aa00ff22" stroke-width="1"/>
+    <text x="77" y="173" text-anchor="middle" font-family="monospace" font-size="9" fill="#aa00ff">camera CV</text>
+    <circle class="dot" cx="105" cy="159" r="2.5" fill="#aa00ff" style="animation-delay:0.4s"/>
+  </g>
+
+  <!-- DOCKER ROS box -->
+  <g class="b2">
+    <rect x="280" y="20" width="240" height="180" rx="6" fill="#0d0d15" stroke="#00aaff33" stroke-width="1"/>
+    <text x="400" y="42" text-anchor="middle" font-family="monospace" font-size="10" fill="#00aaff66" letter-spacing="2">DOCKER / ROS 2</text>
+
+    <rect x="295" y="55" width="100" height="32" rx="3" fill="#111" stroke="#00ff8822"/>
+    <text x="345" y="69" text-anchor="middle" font-family="monospace" font-size="8" fill="#00ff88">plc_simulator</text>
+    <text x="345" y="80" text-anchor="middle" font-family="monospace" font-size="7" fill="#335">fault inject</text>
+
+    <rect x="405" y="55" width="100" height="32" rx="3" fill="#111" stroke="#aa00ff22"/>
+    <text x="455" y="69" text-anchor="middle" font-family="monospace" font-size="8" fill="#aa00ff">fault_detection</text>
+    <text x="455" y="80" text-anchor="middle" font-family="monospace" font-size="7" fill="#335">isolation forest</text>
+
+    <rect x="295" y="100" width="100" height="32" rx="3" fill="#111" stroke="#ff880022"/>
+    <text x="345" y="114" text-anchor="middle" font-family="monospace" font-size="8" fill="#ff8800">cv_node</text>
+    <text x="345" y="125" text-anchor="middle" font-family="monospace" font-size="7" fill="#335">box detection</text>
+
+    <rect x="405" y="100" width="100" height="32" rx="3" fill="#111" stroke="#00aaff22"/>
+    <text x="455" y="114" text-anchor="middle" font-family="monospace" font-size="8" fill="#00aaff">webots_bridge</text>
+    <text x="455" y="125" text-anchor="middle" font-family="monospace" font-size="7" fill="#335">topic bridge</text>
+
+    <!-- rosbridge -->
+    <rect x="295" y="145" width="210" height="38" rx="3" fill="#0a1a0a" stroke="#00ff8844"/>
+    <text x="400" y="159" text-anchor="middle" font-family="monospace" font-size="8" fill="#00ff88">rosbridge WebSocket</text>
+    <text x="400" y="173" text-anchor="middle" font-family="monospace" font-size="7" fill="#335">ws://localhost:9090</text>
+    <circle class="dot" cx="290" cy="150" r="2.5" fill="#00ff88" style="animation-delay:0.2s"/>
+  </g>
+
+  <!-- DASHBOARD box -->
+  <g class="b3">
+    <rect x="560" y="20" width="220" height="180" rx="6" fill="#0d0d15" stroke="#00ff8833" stroke-width="1"/>
+    <text x="670" y="42" text-anchor="middle" font-family="monospace" font-size="10" fill="#00ff8866" letter-spacing="2">SCADA DASHBOARD</text>
+
+    <!-- Mini chart -->
+    <rect x="575" y="52" width="190" height="50" rx="3" fill="#060610" stroke="#00ff8815"/>
+    <polyline points="580,95 600,80 620,82 640,70 660,75 680,65 700,72 720,60 740,68 760,62" fill="none" stroke="#00ff88" stroke-width="1.5"/>
+    <line x1="575" y1="80" x2="765" y2="80" stroke="#ffaa0033" stroke-width="1" stroke-dasharray="4 4"/>
+    <line x1="575" y1="70" x2="765" y2="70" stroke="#ff444433" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="578" y="64" font-family="monospace" font-size="7" fill="#555">1.0</text>
+    <text x="578" y="74" font-family="monospace" font-size="7" fill="#ffaa0066">0.7</text>
+    <text x="578" y="84" font-family="monospace" font-size="7" fill="#ff444466">0.5</text>
+
+    <!-- Status boxes -->
+    <rect x="575" y="112" width="88" height="28" rx="3" fill="#0a1a0a" stroke="#00ff8822"/>
+    <text x="619" y="122" text-anchor="middle" font-family="monospace" font-size="7" fill="#555">ROBOT STATE</text>
+    <text x="619" y="134" text-anchor="middle" font-family="monospace" font-size="9" fill="#00ff88">PICKING</text>
+
+    <rect x="673" y="112" width="92" height="28" rx="3" fill="#1a0a00" stroke="#ff880022"/>
+    <text x="719" y="122" text-anchor="middle" font-family="monospace" font-size="7" fill="#555">FAULT STATUS</text>
+    <text x="719" y="134" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff8800">FAULT 2</text>
+
+    <!-- Fault history -->
+    <rect x="575" y="150" width="190" height="38" rx="3" fill="#110000" stroke="#ff444422"/>
+    <text x="670" y="163" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff4444">[14:23] F2: Missed pick</text>
+    <text x="670" y="176" text-anchor="middle" font-family="monospace" font-size="7" fill="#883333">[14:21] F4: Gripper fail</text>
+  </g>
+
+  <!-- ROS TOPICS label -->
+  <g class="b4">
+    <rect x="280" y="230" width="240" height="90" rx="6" fill="#050510" stroke="#00ff8815" stroke-width="1"/>
+    <text x="400" y="250" text-anchor="middle" font-family="monospace" font-size="9" fill="#335">/plc/state</text>
+    <text x="400" y="266" text-anchor="middle" font-family="monospace" font-size="9" fill="#335">/fault/anomaly_score</text>
+    <text x="400" y="282" text-anchor="middle" font-family="monospace" font-size="9" fill="#335">/fault/alert</text>
+    <text x="400" y="298" text-anchor="middle" font-family="monospace" font-size="9" fill="#335">/cv/detections</text>
+    <text x="400" y="314" text-anchor="middle" font-family="monospace" font-size="7" fill="#222">ROS 2 TOPICS</text>
+  </g>
+
+  <!-- MAC BRIDGE -->
+  <g class="b5">
+    <rect x="20" y="240" width="220" height="60" rx="6" fill="#0d0d15" stroke="#ffaa0033" stroke-width="1"/>
+    <text x="130" y="260" text-anchor="middle" font-family="monospace" font-size="10" fill="#ffaa0066">mac_bridge.py</text>
+    <text x="130" y="276" text-anchor="middle" font-family="monospace" font-size="8" fill="#335">Mac ↔ Docker relay</text>
+    <text x="130" y="290" text-anchor="middle" font-family="monospace" font-size="7" fill="#222">port 9001 · 9003</text>
+  </g>
+
+  <!-- Animated connection lines -->
+  <!-- Webots → Docker -->
+  <line class="pipe" x1="240" y1="100" x2="278" y2="100" stroke="#00ff88" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Docker → Dashboard (through rosbridge) -->
+  <line class="pipe2" x1="520" y1="164" x2="558" y2="164" stroke="#00aaff" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- Docker ↔ ROS Topics -->
+  <line class="pipe" x1="400" y1="200" x2="400" y2="228" stroke="#00ff88" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Mac Bridge ↔ Webots -->
+  <line class="pipe2" x1="130" y1="240" x2="130" y2="202" stroke="#ffaa00" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Labels on arrows -->
+  <text x="258" y="94" font-family="monospace" font-size="7" fill="#00ff8877">controller API</text>
+  <text x="524" y="158" font-family="monospace" font-size="7" fill="#00aaff77">WebSocket</text>
+
+  <!-- Footer -->
+  <text x="400" y="395" text-anchor="middle" font-family="monospace" font-size="9" fill="#222">Python 3.10 · scikit-learn · Chart.js · Docker · ROS 2 Humble</text>
+</svg>
