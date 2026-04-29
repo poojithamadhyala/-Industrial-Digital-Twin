@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Industrial Digital Twin Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0f;
+      color: #e0e0e0;
+      font-family: 'Courier New', monospace;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    h1 {
+      text-align: center;
+      color: #00ff88;
+      font-size: 22px;
+      margin-bottom: 20px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #00ff8833;
+      padding-bottom: 12px;
+    }
+
+    h1 .gear { animation: spin 8s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .card {
+      background: #111118;
+      border: 1px solid #1e1e2e;
+      border-radius: 6px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00ff8822, transparent);
+    }
+
+    .card h3 {
+      font-size: 10px;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #00ff88;
+    }
+
+    .status-ok   { color: #00ff88; }
+    .status-warn { color: #ffaa00; }
+    .status-crit { color: #ff4444; }
+    .status-fault{ color: #ff4444; }
+
+    .state-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      background: #001a0a;
+      color: #00ff88;
+      border: 1px solid #00ff8833;
+    }
+    .state-badge.pick    { background:#001a33; color:#00aaff; border-color:#00aaff33; }
+    .state-badge.place   { background:#1a0033; color:#aa00ff; border-color:#aa00ff33; }
+    .state-badge.home    { background:#1a1a00; color:#ffff00; border-color:#ffff0033; }
+    .state-badge.faulted { background:#330000; color:#ff4444; border-color:#ff444433;
+                           animation: fault-pulse 1s ease-in-out infinite; }
+    .state-badge.idle    { background:#001a0a; color:#00ff88; border-color:#00ff8833; }
+
+    @keyframes fault-pulse {
+      0%, 100% { box-shadow: 0 0 0px #ff4444; }
+      50%       { box-shadow: 0 0 12px #ff444488; }
+    }
+
+    .score-bar-bg {
+      background: #1a1a22;
+      border-radius: 4px;
+      height: 10px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    .score-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease, background-color 0.5s ease;
+    }
+
+    .anomaly-level {
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+    .anomaly-level.ok   { color:#00ff88; border-color:#00ff8844; background:#001a0a; }
+    .anomaly-level.warn { color:#ffaa00; border-color:#ffaa0044; background:#1a0d00; animation: warn-blink 2s ease-in-out infinite; }
+    .anomaly-level.crit { color:#ff4444; border-color:#ff444444; background:#1a0000; animation: crit-blink 0.8s ease-in-out infinite; }
+
+    @keyframes warn-blink {
+      0%,100% { opacity:1; } 50% { opacity:0.6; }
+    }
+    @keyframes crit-blink {
+      0%,100% { opacity:1; } 50% { opacity:0.4; }
+    }
+
+    .fault-list, .detection-list {
+      max-height: 130px;
+      overflow-y: auto;
+      font-size: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: #333 transparent;
+    }
+
+    .fault-item {
+      padding: 5px 8px;
+      margin-bottom: 3px;
+      border-radius: 3px;
+      border-left: 3px solid #ff4444;
+      background: #1a0000;
+      color: #ff8888;
+      animation: slide-in 0.3s ease;
+    }
+
+    .det-item {
+      padding: 5px 8px;
+      margin-bottom: 3px;
+      border-radius: 3px;
+      display: flex;
+      justify-content: space-between;
+      animation: slide-in 0.3s ease;
+    }
+    .det-red    { background:#1a0000; border-left:3px solid #ff4444; color:#ff8888; }
+    .det-blue   { background:#00001a; border-left:3px solid #4488ff; color:#88aaff; }
+    .det-orange { background:#1a0d00; border-left:3px solid #ff8800; color:#ffaa44; }
+    .det-empty  { color:#444; font-style:italic; }
+
+    @keyframes slide-in {
+      from { opacity:0; transform: translateX(-6px); }
+      to   { opacity:1; transform: translateX(0); }
+    }
+
+    .conveyor-value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #555;
+    }
+    .conveyor-value.running {
+      color: #00ff88;
+      animation: conveyor-pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes conveyor-pulse {
+      0%,100% { text-shadow: 0 0 0px #00ff88; }
+      50%      { text-shadow: 0 0 10px #00ff8899; }
+    }
+
+    .chart-container { height: 200px; position: relative; }
+
+    .threshold-legend {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      font-size: 10px;
+    }
+    .thr-warn { color: #ffaa0099; }
+    .thr-crit { color: #ff444499; }
+
+    .conn-dot {
+      display: inline-block;
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: #333;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .conn-dot.connected {
+      background: #00ff88;
+      box-shadow: 0 0 6px #00ff88;
+      animation: conn-pulse 2s ease-in-out infinite;
+    }
+    @keyframes conn-pulse {
+      0%,100% { box-shadow: 0 0 4px #00ff88; }
+      50%      { box-shadow: 0 0 10px #00ff88; }
+    }
+
+    .wide { grid-column: span 2; }
+    .full { grid-column: span 3; }
+  </style>
+</head>
+<body>
+  <h1><span class="gear">⚙</span> &nbsp;Industrial Digital Twin — Live Dashboard</h1>
+
+  <div class="grid">
+
+    <div class="card">
+      <h3>Connection</h3>
+      <span class="conn-dot" id="connDot"></span>
+      <span id="connStatus" style="font-size:13px">Connecting...</span>
+    </div>
+
+    <div class="card">
+      <h3>Robot State</h3>
+      <div id="robotState" class="state-badge idle">IDLE</div>
+    </div>
+
+    <div class="card">
+      <h3>Cycles Completed</h3>
+      <div class="value" id="cycleCount">0</div>
+    </div>
+
+    <div class="card wide">
+      <h3>ML Anomaly Score</h3>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="value" id="anomalyScore">0.000</span>
+        <span id="anomalyLevel" class="anomaly-level ok">OK</span>
+      </div>
+      <div class="score-bar-bg">
+        <div class="score-bar" id="scoreBar" style="width:0%;background:#00ff88"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Fault Status</h3>
+      <div class="value" id="faultCode" style="font-size:20px;color:#00ff88">OK</div>
+    </div>
+
+    <div class="card full">
+      <h3>Anomaly Score — Live (last 60s)</h3>
+      <div class="chart-container">
+        <canvas id="anomalyChart"></canvas>
+      </div>
+      <div class="threshold-legend">
+        <span class="thr-warn">— WARNING threshold (0.70)</span>
+        <span class="thr-crit">— CRITICAL threshold (0.90)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>CV Detections</h3>
+      <div class="detection-list" id="detectionList">
+        <div class="det-empty" id="detEmptyMsg">No objects in frame</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Fault History</h3>
+      <div class="fault-list" id="faultList">
+        <div style="color:#444;font-size:12px" id="faultEmptyMsg">No faults yet</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Conveyor</h3>
+      <div class="conveyor-value" id="conveyorStatus">STOPPED</div>
+      <div style="margin-top:8px;font-size:11px;color:#444;letter-spacing:1px" id="autoMode">AUTO: --</div>
+    </div>
+
+  </div>
+
+  <script>
+    const WS_URL = 'ws://localhost:9090'
+    let ws = null
+    let reconnectTimer = null
+
+    // ── Chart ─────────────────────────────────────────────────────────
+    const ctx = document.getElementById('anomalyChart').getContext('2d')
+    const labels   = Array.from({length:60}, (_,i) => i)
+
+    const chartData = {
+      labels,
+      datasets: [
+        {
+          label: 'Anomaly Score',
+          data: Array(60).fill(null),
+          borderColor: '#00ff88',
+          backgroundColor: 'rgba(0,255,136,0.04)',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.4,
+          fill: true,
+          order: 1
+        },
+        {
+          label: 'Warning (0.70)',
+          data: Array(60).fill(0.70),
+          borderColor: 'rgba(255,170,0,0.45)',
+          borderWidth: 1,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false,
+          order: 2
+        },
+        {
+          label: 'Critical (0.90)',
+          data: Array(60).fill(0.90),
+          borderColor: 'rgba(255,68,68,0.45)',
+          borderWidth: 1,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          fill: false,
+          order: 3
+        }
+      ]
+    }
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: chartData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        scales: {
+          x: { display: false },
+          y: {
+            min: 0, max: 1,
+            grid: { color: '#1a1a2a' },
+            ticks: { color: '#555', font: { size: 10, family: 'Courier New' }, stepSize: 0.1 }
+          }
+        },
+        plugins: { legend: { display: false } }
+      }
+    })
+
+    // ── Helpers ───────────────────────────────────────────────────────
+    function scoreLevel(score) {
+      if (score > 0.90) return 'crit'
+      if (score > 0.70) return 'warn'
+      return 'ok'
+    }
+
+    function faultName(code) {
+      const names = {
+        1: 'Joint limit exceeded',
+        2: 'Missed pick',
+        3: 'Vision timeout',
+        4: 'Gripper failure',
+        5: 'Emergency stop'
+      }
+      return names[code] || 'Unknown fault'
+    }
+
+    // ── State ─────────────────────────────────────────────────────────
+    let lastFaultCode = 0
+    let tick = 0
+    let cvLastSeen = Date.now()
+
+    // ── WebSocket ─────────────────────────────────────────────────────
+    function connect() {
+      ws = new WebSocket(WS_URL)
+
+      ws.onopen = () => {
+        document.getElementById('connDot').classList.add('connected')
+        document.getElementById('connStatus').textContent = 'Connected to ROS 2'
+        subscribeTopics()
+      }
+
+      ws.onclose = () => {
+        document.getElementById('connDot').classList.remove('connected')
+        document.getElementById('connStatus').textContent = 'Disconnected — retrying...'
+        clearTimeout(reconnectTimer)
+        reconnectTimer = setTimeout(connect, 3000)
+      }
+
+      ws.onerror = () => ws.close()
+
+      ws.onmessage = (event) => {
+        try { handleMessage(JSON.parse(event.data)) }
+        catch(e) { console.warn('Bad message:', e) }
+      }
+    }
+
+    function subscribe(topic, type) {
+      ws.send(JSON.stringify({ op: 'subscribe', topic, type }))
+    }
+
+    function subscribeTopics() {
+      subscribe('/plc/state',           'std_msgs/String')
+      subscribe('/fault/alert',         'std_msgs/String')
+      subscribe('/fault/anomaly_score', 'std_msgs/Float32')
+      subscribe('/cv/detections',       'std_msgs/String')
+    }
+
+    function handleMessage(msg) {
+      const topic = msg.topic
+      const data  = msg.msg
+      if      (topic === '/plc/state')            updateRobotState(JSON.parse(data.data))
+      else if (topic === '/fault/alert')          updateAlert(JSON.parse(data.data))
+      else if (topic === '/fault/anomaly_score')  updateChart(data.data)
+      else if (topic === '/cv/detections')        updateDetections(JSON.parse(data.data))
+    }
+
+    // ── Update functions ──────────────────────────────────────────────
+
+    function updateRobotState(state) {
+      const s = (state.robot_state || 'idle').toLowerCase()
+      const badge = document.getElementById('robotState')
+      badge.textContent = s.toUpperCase()
+      badge.className = 'state-badge ' + s
+
+      document.getElementById('cycleCount').textContent = state.cycle_count ?? 0
+
+      const running = !!state.conveyor_run
+      const conv = document.getElementById('conveyorStatus')
+      conv.textContent = running ? 'RUNNING' : 'STOPPED'
+      conv.className = 'conveyor-value' + (running ? ' running' : '')
+      document.getElementById('autoMode').textContent =
+        'AUTO: ' + (state.auto_mode ? 'ON' : 'OFF')
+
+      const fc   = document.getElementById('faultCode')
+      const code = state.fault_code || 0
+      if (code > 0) {
+        fc.textContent = 'FAULT ' + code
+        fc.style.color = '#ff4444'
+        // Only log when fault code actually changes
+        if (code !== lastFaultCode) {
+          addFaultHistory(code, state.fault_message || faultName(code))
+          lastFaultCode = code
+        }
+      } else {
+        fc.textContent = 'OK'
+        fc.style.color = '#00ff88'
+        lastFaultCode = 0
+      }
+    }
+
+    function updateAlert(alert) {
+      const score = alert.score ?? 0
+      const level = scoreLevel(score)
+
+      document.getElementById('anomalyScore').textContent = score.toFixed(3)
+
+      const levelEl = document.getElementById('anomalyLevel')
+      levelEl.textContent = level.toUpperCase()
+      levelEl.className = 'anomaly-level ' + level
+
+      const bar = document.getElementById('scoreBar')
+      bar.style.width = (score * 100) + '%'
+      bar.style.background = level === 'ok'   ? '#00ff88' :
+                              level === 'warn' ? '#ffaa00' : '#ff4444'
+    }
+
+    function updateChart(score) {
+      tick++
+      const mainDs = chartData.datasets[0]
+      mainDs.data.shift()
+      mainDs.data.push(score)
+      chartData.labels.shift()
+      chartData.labels.push(tick)
+
+      mainDs.borderColor      = score > 0.90 ? '#ff4444' : score > 0.70 ? '#ffaa00' : '#00ff88'
+      mainDs.backgroundColor  = score > 0.90 ? 'rgba(255,68,68,0.05)'  :
+                                 score > 0.70 ? 'rgba(255,170,0,0.05)'  :
+                                                'rgba(0,255,136,0.04)'
+      chart.update('none')
+    }
+
+    function updateDetections(det) {
+      const list  = document.getElementById('detectionList')
+      const empty = document.getElementById('detEmptyMsg')
+      if (empty) empty.remove()
+
+      const type  = (det.type || 'unknown').toLowerCase()
+      const cls   = ['red','blue','orange'].includes(type) ? 'det-' + type : 'det-orange'
+      const entry = document.createElement('div')
+      entry.className = 'det-item ' + cls
+      entry.innerHTML = `<span>${type.toUpperCase()} box</span><span>→ ${det.bin || '?'}</span>`
+
+      list.insertBefore(entry, list.firstChild)
+      if (list.children.length > 10) list.removeChild(list.lastChild)
+
+      cvLastSeen = Date.now()
+    }
+
+    function addFaultHistory(code, msg) {
+      const list  = document.getElementById('faultList')
+      const empty = document.getElementById('faultEmptyMsg')
+      if (empty) empty.remove()
+
+      const time  = new Date().toLocaleTimeString()
+      const entry = document.createElement('div')
+      entry.className = 'fault-item'
+      entry.textContent = `[${time}] F${code}: ${msg}`
+      list.insertBefore(entry, list.firstChild)
+      if (list.children.length > 15) list.removeChild(list.lastChild)
+    }
+
+    // Show "No objects in frame" after 5s of no CV detections
+    setInterval(() => {
+      const list = document.getElementById('detectionList')
+      if (Date.now() - cvLastSeen > 5000 && list.children.length === 0) {
+        const t = new Date().toLocaleTimeString()
+        list.innerHTML = `<div class="det-empty" id="detEmptyMsg">No objects in frame — ${t}</div>`
+      }
+    }, 5000)
+
+    connect()
+  </script>
+</body>
+</html>

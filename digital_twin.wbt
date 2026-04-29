@@ -1,0 +1,216 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/conveyors/protos/ConveyorBelt.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/universal_robots/protos/UR5e.proto"
+
+Background {
+  skyColor [
+    0.15 0.15 0.15
+  ]
+}
+DirectionalLight {
+  ambientIntensity 0.5
+  direction 0.5 -1 -0.5
+}
+WorldInfo {
+  title "Industrial Digital Twin"
+}
+Viewpoint {
+  orientation -0.21250142010675724 0.23489194466900631 0.9485087879309417 1.5235145720771828
+  position -0.29128166048690285 -2.5011140010750115 0.8662979663070361
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+DEF FLOOR Solid {
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.2 0.2 0.2
+        roughness 1
+      }
+      geometry Plane {
+        size 5 5
+      }
+    }
+  ]
+  boundingObject Plane {
+    size 5 5
+  }
+}
+DEF CONVEYOR ConveyorBelt {
+  hidden translation_1 0.0016199035561642594 7.045378331098247e-06 0.2267109026647446
+  hidden rotation_1 0.5885624634640649 -0.6303830654642101 -0.506173307649719 0.0005001309551059478
+  hidden linearVelocity_1 -1.0327477389182605e-07 -3.7541305060728725e-09 -1.2118127710891714e-07
+  hidden angularVelocity_1 -1.7952960192237958e-08 1.8844483171123064e-08 1.5433854383681617e-08
+  translation 0.5 0 0.15
+  size 2 0.5 0.3
+  speed 0.2
+}
+DEF UR5 UR5e {
+  hidden position_0_0 1.5927483460371128e-05
+  hidden rotation_1 0 0 1 1.5927494245793006e-05
+  hidden position_1_0 -0.1158851484811076
+  hidden linearVelocity_1 1.3145138916970592e-07 3.726032124916998e-09 -1.531157805964221e-07
+  hidden angularVelocity_1 -1.1544516888595368e-08 -4.113732934238156e-12 -1.4525247074960909e-08
+  hidden rotation_2 0 1 0 1.4549108515188927
+  hidden position_2_0 0.00010842169964655533
+  hidden linearVelocity_2 -4.1575209269855325e-06 5.9928951167237275e-09 3.777210648697453e-05
+  hidden angularVelocity_2 3.925237594434799e-08 -0.00018040931949695626 -2.1906684920750388e-09
+  hidden rotation_3 0 1 0 0.00010842170081940148
+  hidden position_3_0 -1.5700349149569799
+  hidden linearVelocity_3 -4.227626711727823e-06 3.7224411373951676e-09 3.933907696017424e-05
+  hidden angularVelocity_3 -4.085587602221559e-08 0.0002454754379122709 -3.5563992697622275e-08
+  hidden rotation_4 0 1 0 0.0007610850414947233
+  hidden position_4_0 -2.6820604033773364e-06
+  hidden linearVelocity_4 2.7277196519272025e-06 6.961067183964843e-11 -1.952404308710983e-05
+  hidden angularVelocity_4 8.743272663900427e-08 -0.0001828454916638309 -1.4006339702069673e-08
+  hidden rotation_5 0 0 -1 2.6820434413246167e-06
+  hidden position_5_0 -1.2856875730599595e-06
+  hidden linearVelocity_5 7.363175417137034e-07 1.2516204848844694e-09 -1.2366329153749095e-06
+  hidden angularVelocity_5 8.771036204503407e-08 -0.0001828503590476656 -1.578072463510372e-08
+  hidden rotation_6 0 -1 0 1.2856516009642697e-06
+  hidden linearVelocity_6 7.683244748045535e-07 1.7894781029434469e-09 -1.2119922247106807e-06
+  hidden angularVelocity_6 8.9170073789956e-08 -0.000182849927802864 -1.7884907621547964e-08
+  translation -0.3 0 0
+  controller "digital_twin_controller"
+}
+DEF RED_BOX Solid {
+  translation 1.1973062257334868 0.00018827788466223286 0.04960760000000001
+  rotation 3.386427556832298e-13 2.3088633329002933e-13 1 0.00026905458751847995
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "red_box"
+  boundingObject Box {
+    size 0.1 0.1 0.1
+  }
+  physics Physics {
+  }
+  recognitionColors [
+    1 0 0
+  ]
+  linearVelocity 3.939917566917896e-17 -4.2789681797506406e-17 2.465190328815662e-32
+  angularVelocity 5.329070518200748e-16 1.06581410364015e-15 1.2372907354599927e-16
+}
+DEF BLUE_BOX Solid {
+  translation 1.8727832641055102 0.10032447120575537 0.04960760000000001
+  rotation 7.938754174882153e-14 3.8874742118077723e-14 -1 0.00014360742392606197
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 1
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "blue_box"
+  boundingObject Box {
+    size 0.1 0.1 0.1
+  }
+  physics Physics {
+  }
+  recognitionColors [
+    0 0 1
+  ]
+  linearVelocity 3.514967680430206e-17 7.0590362669444e-17 2.465190328815662e-32
+  angularVelocity -1.5987211554602249e-15 7.99360577730112e-16 -1.2828162472274107e-16
+}
+DEF ORANGE_BOX Solid {
+  translation 1.8 1.2618515140101132e-16 0.04960760000000001
+  rotation -0.019686217214607227 -0.009843108607301086 0.999757753690725 4.3312093614391507e-16
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.5 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "orange_box"
+  boundingObject Box {
+    size 0.1 0.1 0.1
+  }
+  physics Physics {
+  }
+  recognitionColors [
+    1 0.5 0
+  ]
+  linearVelocity -2.6852415942242294e-17 4.203271898949316e-17 7.395570986446986e-32
+  angularVelocity -5.329070518200752e-16 -5.329070518200748e-16 4.020524587981499e-18
+}
+DEF BIN_RED Solid {
+  translation -1 -0.8 0.025
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.8 0 0
+      }
+      geometry Box {
+        size 0.3 0.3 0.05
+      }
+    }
+  ]
+  name "bin_red"
+}
+DEF BIN_BLUE Solid {
+  translation -1 0 0.025
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0.8
+      }
+      geometry Box {
+        size 0.3 0.3 0.05
+      }
+    }
+  ]
+  name "bin_blue"
+}
+DEF BIN_ORANGE Solid {
+  translation -1 0.8 0.025
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.9 0.4 0
+      }
+      geometry Box {
+        size 0.3 0.3 0.05
+      }
+    }
+  ]
+  name "bin_orange"
+}
+DEF CAMERA_ROBOT Robot {
+  translation 0.5 0 3
+  rotation 1 0 0 -1.570808
+  children [
+    Camera {
+      rotation 1 0 0 -1.5708
+      name "industrial_camera"
+      width 640
+      height 480
+      recognition Recognition {
+        maxRange 5
+        frameColor 0 0 1
+        frameThickness 3
+      }
+    }
+  ]
+  name "camera_robot"
+  controller "camera_controller"
+}
